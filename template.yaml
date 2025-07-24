@@ -84,6 +84,13 @@ spec:
                   title: Consequences
                   description: What becomes easier or more difficult to do because of this change?
                   default: Describe the consequences.
+    - title: Catalog Registration
+      properties:
+        registerComponent:
+          title: Create a new catalog-info.yaml?
+          type: boolean
+          description: "Warning: Only select this if the repo does not have a catalog-info.yaml. This will create a new component in the catalog."
+          default: false
   steps:
     - id: fetch
       name: Fetch repository content
