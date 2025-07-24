@@ -39,6 +39,11 @@ spec:
           type: boolean
           title: Pre fill ADR fields
           default: false
+        adrFileName:
+          type: string
+          title: ADR File Name
+          description: Name of the ADR markdown file (e.g. adr.md)
+          default: adr.md
       dependencies:
         preFill:
           oneOf:
@@ -103,6 +108,9 @@ spec:
 
             ## Consequences
             ${{ parameters.adrConsequences if parameters.preFill else '[Describe the consequences.]' }}
+        copyWithoutTemplating:
+          - adr.md
+        targetPath: docs/${{ parameters.adrFileName }}
 
     - id: pr
       name: Open a PR
