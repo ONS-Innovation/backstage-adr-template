@@ -203,14 +203,15 @@ spec:
 
   output:
     text:
-      - title: "Important"
+      - title: "Success!"
         content: |
           Pull request created to add the ADR file to the repository.
-          ${{ parameters.createCatalogInfo ? 
-            'Catalog-info.yaml created in the root of the repository.\n' +
-            'After the pull request is merged, you can register the component in the catalog.\n' +
-            'Go to /catalog-import to register the component in the catalog.\n'
-            : '' }}
+          {% if parameters.createCatalogInfo %}
+          Catalog-info.yaml created in the root of the repository.
+          After the pull request is merged, you can register the component in the catalog.
+          Go to /catalog-import to register the component in the catalog.
+          {% endif %}
     links:
       - title: Open in GitHub
         url: ${{ steps.pr.output.remoteUrl }}
+
