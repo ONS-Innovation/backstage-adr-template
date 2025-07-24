@@ -108,9 +108,15 @@ spec:
 
             ## Consequences
             ${{ parameters.adrConsequences if parameters.preFill else '[Describe the consequences.]' }}
-        copyWithoutTemplating:
-          - adr.md
-        targetPath: docs/${{ parameters.adrFileName }}
+        targetPath: docs
+
+    - id: rename
+      name: Rename ADR file
+      action: fs:rename
+      input:
+        files:
+          - from: docs/adr.md
+            to: docs/${{ parameters.adrFileName }}
 
     - id: pr
       name: Open a PR
