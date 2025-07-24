@@ -89,13 +89,6 @@ spec:
             ## Consequences
             ${{ parameters.adrConsequences if parameters.preFill else '[Describe the consequences.]' }}
 
-    - id: add-catalog-info
-      name: Add catalog-info.yaml
-      if: ${{ parameters.autoMerge }}
-      action: some:action:to:add:catalog-info
-      input:
-        # ...catalog-info.yaml content...
-
     - id: pr
       name: Open a PR
       action: publish:github:pull-request
