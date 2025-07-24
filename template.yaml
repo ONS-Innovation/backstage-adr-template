@@ -70,3 +70,8 @@ spec:
       action: catalog:register
       input:
         entityRef: ${{ steps.pr.output.remoteUrl }}
+
+  output:
+    links:
+      - title: Open in GitHub
+        url: ${{ steps.pr.output.remoteUrl }}
