@@ -89,7 +89,7 @@ spec:
         createCatalogInfo:
           title: Create a new catalog-info.yaml?
           type: boolean
-          description: "Warning: Only select this if the repo does not have a catalog-info.yaml. This will create a new component in the catalog."
+          description: "Warning: Only select this if the repo does not have a catalog-info.yaml. This will create a catalog-info.yaml file in the root of the repository. After the PR is merged, you can register the component in the catalog."
           default: false
       dependencies:
         createCatalogInfo:
@@ -200,6 +200,15 @@ spec:
           - ${{ user.entity.metadata.annotations['github.com/user-login'] }}
 
   output:
+    text:
+      - text: "PR created"
+        content: |
+          PR created to add the ADR file to the repository.
+      - text: "Catalog-info.yaml created"
+        content: |
+          Catalog-info.yaml created in the root of the repository.
+          After the PR is merged, you can register the component in the catalog.
+          Go to /catalog-import to register the component in the catalog.
     links:
       - title: Open in GitHub
         url: ${{ steps.pr.output.remoteUrl }}
