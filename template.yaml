@@ -17,8 +17,14 @@ spec:
         - repoUrl
       properties:
         repoUrl:
+          title: Repository Location
           type: string
-          description: GitHub repo URL (e.g. github.com/org/repo)
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+            allowedOrganizations:
+              - ONS-Innovation
 
   steps:
     - id: fetch
