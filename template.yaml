@@ -86,16 +86,16 @@ spec:
                   default: Describe the consequences.
     - title: Catalog Registration
       properties:
-        registerComponent:
+        createCatalogInfo:
           title: Create a new catalog-info.yaml?
           type: boolean
           description: "Warning: Only select this if the repo does not have a catalog-info.yaml. This will create a new component in the catalog."
           default: false
       dependencies:
-        registerComponent:
+        createCatalogInfo:
           oneOf:
             - properties:
-                registerComponent:
+                createCatalogInfo:
                   const: false
             - required:
                 - repository_name
@@ -104,7 +104,7 @@ spec:
                 - catalog_owner
                 - catalog_system
               properties:
-                registerComponent:
+                createCatalogInfo:
                   const: true
                 repository_name:
                   title: Name
@@ -171,8 +171,8 @@ spec:
             to: ./docs/${{ parameters.adrFileName }}
 
     - id: fetch-catalog-info
-      name: Fetch catalog-info.yaml
-      if: ${{ parameters.registerComponent }}
+      name: Create catalog-info.yaml
+      if: ${{ parameters.createCatalogInfo }}
       action: fetch:template
       input:
         url: ./template
@@ -198,14 +198,6 @@ spec:
         commitMessage: "Add ADR file"
         assignees:
           - ${{ user.entity.metadata.annotations['github.com/user-login'] }}
-
-    - id: register
-      name: Register
-      if: ${{ parameters.registerComponent }}
-      action: catalog:register
-      optional: true
-      input:
-        catalogInfoUrl: ${{ steps.pr.output.remoteUrl }}/blob/main/catalog-info.yaml
 
   output:
     links:
