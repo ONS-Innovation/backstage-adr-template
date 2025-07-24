@@ -63,8 +63,9 @@ spec:
         branchName: "add-adr-file"
         description: |
           This PR adds a docs/adr.md file as part of architectural documentation.
-        targetPath: '.'
+        targetPath: "."
         commitMessage: "Add ADR file"
+
     - id: register
       name: Register the entity
       action: catalog:register
