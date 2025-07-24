@@ -91,12 +91,57 @@ spec:
           type: boolean
           description: "Warning: Only select this if the repo does not have a catalog-info.yaml. This will create a new component in the catalog."
           default: false
+      dependencies:
+        registerComponent:
+          oneOf:
+            - properties:
+                registerComponent:
+                  const: false
+            - required:
+                - repository_name
+                - repository_description
+                - repository_owner
+                - catalog_owner
+                - catalog_system
+              properties:
+                registerComponent:
+                  const: true
+                repository_name:
+                  title: Name
+                  type: string
+                  description: What is your repository name? (Use hyphens or underscores for readability. Avoid special characters, spaces, or uppercase letters - e.g. my-awesome-project)
+                  ui:field: EntityNamePicker
+                repository_description:
+                  title: Description
+                  type: string
+                  description: What is your repository description?
+                repository_owner:
+                  title: Repo Organization
+                  type: string
+                  description: What is the organization for your repository? (e.g. your GitHub username)
+                  default: ONS-Innovation
+                catalog_owner:
+                  title: Catalog Owner
+                  type: string
+                  description: Who owns your repository? (user or group)
+                  ui:field: OwnerPicker
+                  ui:options:
+                    catalogFilter:
+                      kind: [User, Group]
+                catalog_system:
+                  title: Catalog System
+                  type: string
+                  description: Which system is this connected to?
+                  ui:field: EntityPicker
+                  ui:options:
+                    catalogFilter:
+                      - kind: System
   steps:
-    - id: fetch
-      name: Fetch repository content
+    - id: fetch-adr
+      name: Fetch ADR Template
       action: fetch:template
       input:
-        url: ./template
+        url: ./template/docs
         values:
           adr_content: |
             # Architecture Decision Record
@@ -115,15 +160,29 @@ spec:
 
             ## Consequences
             ${{ parameters.adrConsequences if parameters.preFill else '[Describe the consequences.]' }}
-        targetPath: docs
+        targetPath: ./docs
 
-    - id: rename
+    - id: rename-adr
       name: Rename ADR file
       action: fs:rename
       input:
         files:
-          - from: docs/adr.md
-            to: docs/${{ parameters.adrFileName }}
+          - from: ./docs/adr_template.md
+            to: ./docs/${{ parameters.adrFileName }}
+
+    - id: fetch-catalog-info
+      name: Fetch catalog-info.yaml
+      if: ${{ parameters.registerComponent }}
+      action: fetch:template
+      input:
+        url: ./template
+        targetPath: ./
+        values:
+          repository_name: ${{ parameters.repository_name }}
+          repository_description: ${{ parameters.repository_description }}
+          repository_owner: ${{ parameters.repository_owner }}
+          catalog_owner: ${{ parameters.catalog_owner }}
+          catalog_system: ${{ parameters.catalog_system }}
 
     - id: pr
       name: Open a PR
@@ -138,6 +197,13 @@ spec:
         commitMessage: "Add ADR file"
         assignees:
           - ${{ user.entity.metadata.annotations['github.com/user-login'] }}
+
+    - id: register
+      name: Register
+      if: ${{ parameters.registerComponent }}
+      action: catalog:register
+      input:
+        catalogInfoUrl: ${{ steps.pr.output.remoteUrl }}/blob/main/catalog-info.yaml
 
   output:
     links:
