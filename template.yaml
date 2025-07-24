@@ -65,3 +65,8 @@ spec:
           This PR adds a docs/adr.md file as part of architectural documentation.
         targetPath: '.'
         commitMessage: "Add ADR file"
+    - id: register
+      name: Register the entity
+      action: catalog:register
+      input:
+        entityRef: ${{ steps.pr.output.remoteUrl }}
