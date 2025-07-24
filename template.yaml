@@ -115,7 +115,8 @@ spec:
           This PR adds a docs/adr.md file as part of architectural documentation.
         targetPath: "."
         commitMessage: "Add ADR file"
-        assignees: ${{ user.entity.metadata.annotations['github.com/user-login'] }}
+        assignees:
+          - ${{ user.entity.metadata.annotations['github.com/user-login'] }}
 
   output:
     links:
