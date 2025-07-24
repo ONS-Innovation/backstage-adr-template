@@ -1,0 +1,59 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: add-adr-file
+  title: Add ADR File
+  description: Creates a docs/adr.md file and opens a PR
+  tags:
+    - adr-file
+spec:
+  owner: "group:default/spotify-backstage-trial-team"
+  type: template
+  lifecycle: experimental
+
+  parameters:
+    - title: Provide repository info
+      required:
+        - repoUrl
+      properties:
+        repoUrl:
+          type: string
+          description: GitHub repo URL (e.g. github.com/org/repo)
+
+  steps:
+    - id: fetch
+      name: Fetch repository content
+      action: fetch:template
+      input:
+        url: ./template
+        values:
+          adr_content: >
+            # Architecture Decision Record
+
+            ## Status
+
+            Proposed
+
+            ## Context
+
+            [Describe the issue that motivated this decision.]
+
+            ## Decision
+
+            [Describe the decision made.]
+
+            ## Consequences
+
+            [Describe the consequences of the decision.]
+
+    - id: pr
+      name: Open a PR
+      action: publish:github:pull-request
+      input:
+        repoUrl: ${{ parameters.repoUrl }}
+        title: "Add ADR file"
+        branchName: "add-adr-file"
+        description: |
+          This PR adds a docs/adr.md file as part of architectural documentation.
+        targetPath: '.'
+        commitMessage: "Add ADR file"
