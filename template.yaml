@@ -203,12 +203,14 @@ spec:
 
   output:
     text:
-      - title: "PR created"
+      - title: "Important"
         content: |
-          PR created to add the ADR file to the repository.
-          Catalog-info.yaml created in the root of the repository.
-          After the PR is merged, you can register the component in the catalog.
-          Go to /catalog-import to register the component in the catalog.
+          Pull request created to add the ADR file to the repository.
+          ${{ parameters.createCatalogInfo ? 
+            'Catalog-info.yaml created in the root of the repository.\n' +
+            'After the pull request is merged, you can register the component in the catalog.\n' +
+            'Go to /catalog-import to register the component in the catalog.\n'
+            : '' }}
     links:
       - title: Open in GitHub
         url: ${{ steps.pr.output.remoteUrl }}
