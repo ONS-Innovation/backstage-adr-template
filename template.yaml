@@ -187,6 +187,7 @@ spec:
     - id: pr
       name: Open a PR
       action: publish:github:pull-request
+      update: true
       input:
         repoUrl: ${{ parameters.repoHost }}?repo=${{ parameters.repoName }}&owner=${{ parameters.repoOrg }}
         title: "Add ADR file"
