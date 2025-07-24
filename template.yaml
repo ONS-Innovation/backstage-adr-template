@@ -33,6 +33,37 @@ spec:
           type: string
           description: Enter the name of the repository
 
+    - title: Options
+      properties:
+        preFill:
+          type: boolean
+          title: Pre fill ADR fields
+          default: false
+        autoMerge:
+          type: boolean
+          title: Auto merge PR and register
+          default: false
+
+    - title: ADR Details
+      if: { properties: { preFill: { const: true } } }
+      required: [adrTitle, adrStatus, adrContext, adrDecision, adrConsequences]
+      properties:
+        adrTitle:
+          type: string
+          title: ADR Title
+        adrStatus:
+          type: string
+          title: Status
+        adrContext:
+          type: string
+          title: Context
+        adrDecision:
+          type: string
+          title: Decision
+        adrConsequences:
+          type: string
+          title: Consequences
+
   steps:
     - id: fetch
       name: Fetch repository content
@@ -40,27 +71,31 @@ spec:
       input:
         url: ./template
         values:
-          adr_content: >
+          adr_content: |
             # Architecture Decision Record
-            ## Title 
-            
-            A meaningful title for the decision, without being excessively verbose. 
-            
-            ## Status 
-            
-            What is the status, such as proposed, accepted, rejected, deprecated, superseded, etc.? 
-            
-            ## Context 
-            
-            What is the issue that we're seeing that is motivating this decision or change? 
-            
-            ## Decision 
-            
-            What is the change that we're proposing and/or doing? 
-            
-            ## Consequences 
-            
-            What becomes easier or more difficult to do because of this change? 
+
+            ## Title
+            ${{ parameters.adrTitle if parameters.preFill else 'A meaningful title for the decision...' }}
+
+            ## Status
+            ${{ parameters.adrStatus if parameters.preFill else 'Proposed' }}
+
+            ## Context
+            ${{ parameters.adrContext if parameters.preFill else '[Describe the issue...]' }}
+
+            ## Decision
+            ${{ parameters.adrDecision if parameters.preFill else '[Describe the decision made.]' }}
+
+            ## Consequences
+            ${{ parameters.adrConsequences if parameters.preFill else '[Describe the consequences.]' }}
+
+    - id: add-catalog-info
+      name: Add catalog-info.yaml
+      if: ${{ parameters.autoMerge }}
+      action: some:action:to:add:catalog-info
+      input:
+        # ...catalog-info.yaml content...
+
     - id: pr
       name: Open a PR
       action: publish:github:pull-request
@@ -73,8 +108,17 @@ spec:
         targetPath: "."
         commitMessage: "Add ADR file"
 
+    - id: merge
+      name: Auto-merge PR
+      if: ${{ parameters.autoMerge }}
+      action: github:merge-pull-request
+      input:
+        pullRequestNumber: ${{ steps.pr.output.pullRequestNumber }}
+        repoUrl: ${{ parameters.repoHost }}?repo=${{ parameters.repoName }}&owner=${{ parameters.repoOrg }}
+
     - id: register
       name: Register the entity
+      if: ${{ parameters.autoMerge }}
       action: catalog:register
       input:
         entityRef: ${{ steps.pr.output.remoteUrl }}
