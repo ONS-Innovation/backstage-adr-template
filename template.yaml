@@ -187,25 +187,25 @@ spec:
     - id: pr
       name: Open a PR
       action: publish:github:pull-request
-      update: true
       input:
+        gitAuthorName: "Backstage"
+        update: true
         repoUrl: ${{ parameters.repoHost }}?repo=${{ parameters.repoName }}&owner=${{ parameters.repoOrg }}
-        title: "Add ADR file"
+        title: "Backstage: Add ADR file"
         branchName: "add-adr-file"
         description: |
           This PR adds a docs/adr.md file as part of architectural documentation.
+          ${{ parameters.createCatalogInfo ? 'Catalog-info.yaml created in the root of the repository.' : '' }}
         targetPath: "."
-        commitMessage: "Add ADR file"
+        commitMessage: "Backstage: Add ADR file"
         assignees:
           - ${{ user.entity.metadata.annotations['github.com/user-login'] }}
 
   output:
     text:
-      - text: "PR created"
+      - title: "PR created"
         content: |
           PR created to add the ADR file to the repository.
-      - text: "Catalog-info.yaml created"
-        content: |
           Catalog-info.yaml created in the root of the repository.
           After the PR is merged, you can register the component in the catalog.
           Go to /catalog-import to register the component in the catalog.
