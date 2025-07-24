@@ -29,23 +29,25 @@ spec:
         values:
           adr_content: >
             # Architecture Decision Record
-
-            ## Status
-
-            Proposed
-
-            ## Context
-
-            [Describe the issue that motivated this decision.]
-
-            ## Decision
-
-            [Describe the decision made.]
-
-            ## Consequences
-
-            [Describe the consequences of the decision.]
-
+            ## Title 
+            
+            A meaningful title for the decision, without being excessively verbose. 
+            
+            ## Status 
+            
+            What is the status, such as proposed, accepted, rejected, deprecated, superseded, etc.? 
+            
+            ## Context 
+            
+            What is the issue that we're seeing that is motivating this decision or change? 
+            
+            ## Decision 
+            
+            What is the change that we're proposing and/or doing? 
+            
+            ## Consequences 
+            
+            What becomes easier or more difficult to do because of this change? 
     - id: pr
       name: Open a PR
       action: publish:github:pull-request
