@@ -175,7 +175,7 @@ spec:
       if: ${{ parameters.createCatalogInfo }}
       action: fetch:template
       input:
-        url: ./template
+        url: ./template/catalog
         targetPath: ./
         values:
           repository_name: ${{ parameters.repository_name }}
@@ -194,7 +194,9 @@ spec:
         branchName: "add-adr-file"
         description: |
           This PR adds a docs/adr.md file as part of architectural documentation.
-          ${{ parameters.createCatalogInfo ? 'Catalog-info.yaml created in the root of the repository.' : '' }}
+          {% if parameters.createCatalogInfo %}
+          Catalog-info.yaml created in the root of the repository.
+          {% endif %}
         targetPath: "."
         commitMessage: "Backstage: Add ADR file"
         assignees:
