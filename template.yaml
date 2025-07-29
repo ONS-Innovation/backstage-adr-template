@@ -36,10 +36,6 @@ spec:
           ui:options:
             catalogFilter:
               kind: [Component]
-        repoName:
-          title: Repository Name (Optional Override)
-          type: string
-          description: If the repository name in GitHub is different from the component name or project-slug annotation, provide it here.
 
     - title: ADR Options
       properties:
@@ -131,7 +127,7 @@ spec:
       action: publish:github:pull-request
       input:
         update: true
-        repoUrl: ${{ parameters.repoHost }}?repo=${{ (parameters.repoName or parameters.selectedComponent.metadata.annotations['github.com/project-slug'] or parameters.selectedComponent.metadata.name) }}&owner=${{ parameters.repoOrg }}
+        repoUrl: ${{ parameters.repoHost }}?repo=${{ parameters.selectedComponent.metadata.annotations['backstage.io/source-location'] }}&owner=${{ parameters.repoOrg }}
         title: "Backstage: Add ADR file"
         branchName: "add-adr-file"
         description: |
