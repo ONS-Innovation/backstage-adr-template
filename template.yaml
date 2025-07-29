@@ -127,7 +127,7 @@ spec:
       action: publish:github:pull-request
       input:
         update: true
-        repoUrl: ${{ parameters.repoHost }}?repo=${{ parameters.selectedComponent.metadata.name }}&owner=${{ parameters.repoOrg }}
+        repoUrl: ${{ parameters.selectedComponent.metadata.annotations['backstage.io/source-location'] }}
         title: "Backstage: Add ADR file"
         branchName: "add-adr-file"
         description: |
