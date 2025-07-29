@@ -36,6 +36,12 @@ spec:
           ui:options:
             catalogFilter:
               kind: [Component]
+        repoName:
+          title: Repository Name
+          type: string
+          description: Enter the repository name (project slug)
+          default: ${{ parameters.selectedComponent.metadata.name }}
+          ui:field: TextField
 
     - title: ADR Options
       properties:
@@ -127,7 +133,7 @@ spec:
       action: publish:github:pull-request
       input:
         update: true
-        repoUrl: ${{ parameters.selectedComponent.metadata.annotations['backstage.io/source-location'] }}
+        repoUrl: ${{ parameters.repoHost }}?repo=${{ parameters.repoName }}&owner=${{ parameters.repoOrg }}
         title: "Backstage: Add ADR file"
         branchName: "add-adr-file"
         description: |
