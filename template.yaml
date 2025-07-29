@@ -122,6 +122,12 @@ spec:
           - from: ./docs/adr_template.md
             to: ./docs/${{ parameters.adrFileName }}
 
+    - id: debug-component
+      name: Log Selected Component
+      action: debug:log
+      input:
+        message: "Selected Component Object -- ${{ parameters.selectedComponent | dump }}"
+
     - id: pr
       name: Open a PR
       action: publish:github:pull-request
