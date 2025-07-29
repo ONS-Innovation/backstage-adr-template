@@ -16,7 +16,7 @@ spec:
       required:
         - repoHost
         - repoOrg
-        - repoName
+        - selectedComponent
       properties:
         repoHost:
           title: Host
@@ -28,10 +28,14 @@ spec:
           type: string
           default: ONS-Innovation
           readOnly: true
-        repoName:
-          title: Repository Name
+        selectedComponent:
+          title: Select Component
           type: string
-          description: Enter the name of the repository
+          description: Select a component from the catalog
+          ui:field: EntityPicker
+          ui:options:
+            catalogFilter:
+              kind: [Component]
 
     - title: ADR Options
       properties:
@@ -84,58 +88,6 @@ spec:
                   title: Consequences
                   description: What becomes easier or more difficult to do because of this change?
                   default: Describe the consequences.
-    - title: Catalog Registration
-      properties:
-        createCatalogInfo:
-          title: Create a new catalog-info.yaml?
-          type: boolean
-          description: "Warning: Only select this if the repo does not have a catalog-info.yaml. This will create a catalog-info.yaml file in the root of the repository. After the PR is merged, you can register the component in the catalog."
-          default: false
-      dependencies:
-        createCatalogInfo:
-          oneOf:
-            - properties:
-                createCatalogInfo:
-                  const: false
-            - required:
-                - repository_name
-                - repository_description
-                - repository_owner
-                - catalog_owner
-                - catalog_system
-              properties:
-                createCatalogInfo:
-                  const: true
-                repository_name:
-                  title: Name
-                  type: string
-                  description: What is your repository name? (Use hyphens or underscores for readability. Avoid special characters, spaces, or uppercase letters - e.g. my-awesome-project)
-                  ui:field: EntityNamePicker
-                repository_description:
-                  title: Description
-                  type: string
-                  description: What is your repository description?
-                repository_owner:
-                  title: Repo Organization
-                  type: string
-                  description: What is the organization for your repository? (e.g. your GitHub username)
-                  default: ONS-Innovation
-                catalog_owner:
-                  title: Catalog Owner
-                  type: string
-                  description: Who owns your repository? (user or group)
-                  ui:field: OwnerPicker
-                  ui:options:
-                    catalogFilter:
-                      kind: [User, Group]
-                catalog_system:
-                  title: Catalog System
-                  type: string
-                  description: Which system is this connected to?
-                  ui:field: EntityPicker
-                  ui:options:
-                    catalogFilter:
-                      - kind: System
   steps:
     - id: fetch-adr
       name: Fetch ADR Template
@@ -170,33 +122,16 @@ spec:
           - from: ./docs/adr_template.md
             to: ./docs/${{ parameters.adrFileName }}
 
-    - id: fetch-catalog-info
-      name: Create catalog-info.yaml
-      if: ${{ parameters.createCatalogInfo }}
-      action: fetch:template
-      input:
-        url: ./template/catalog
-        targetPath: ./
-        values:
-          repository_name: ${{ parameters.repository_name }}
-          repository_description: ${{ parameters.repository_description }}
-          repository_owner: ${{ parameters.repository_owner }}
-          catalog_owner: ${{ parameters.catalog_owner }}
-          catalog_system: ${{ parameters.catalog_system }}
-
     - id: pr
       name: Open a PR
       action: publish:github:pull-request
       input:
         update: true
-        repoUrl: ${{ parameters.repoHost }}?repo=${{ parameters.repoName }}&owner=${{ parameters.repoOrg }}
+        repoUrl: ${{ parameters.repoHost }}?repo=${{ parameters.selectedComponent.metadata.name }}&owner=${{ parameters.repoOrg }}
         title: "Backstage: Add ADR file"
         branchName: "add-adr-file"
         description: |
           This PR adds a docs/adr.md file as part of architectural documentation.
-          {% if parameters.createCatalogInfo %}
-          Catalog-info.yaml created in the root of the repository.
-          {% endif %}
         targetPath: "."
         commitMessage: "Backstage: Add ADR file"
         assignees:
@@ -207,11 +142,6 @@ spec:
       - title: "Success!"
         content: |
           Pull request created to add the ADR file to the repository.
-          {% if parameters.createCatalogInfo %}
-          Catalog-info.yaml created in the root of the repository.
-          After the pull request is merged, you can register the component in the catalog.
-          Go to /catalog-import to register the component in the catalog.
-          {% endif %}
     links:
       - title: Open in GitHub
         url: ${{ steps.pr.output.remoteUrl }}
