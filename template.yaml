@@ -51,6 +51,9 @@ spec:
               kind: [Component]
 
     - title: ADR Options
+      required:
+        - sequenceNumber
+        - shortTitle
       properties:
         preFill:
           type: boolean
@@ -60,12 +63,10 @@ spec:
           type: string
           title: ADR Sequence Number
           description: 'The sequential number for the ADR (e.g., 001).'
-          required: true
         shortTitle:
           type: string
           title: Short Title
           description: 'A short, descriptive title for the ADR filename (e.g., use-new-database).'
-          required: true
       dependencies:
         preFill:
           oneOf:
