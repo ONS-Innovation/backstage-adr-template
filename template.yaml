@@ -3,7 +3,20 @@ kind: Template
 metadata:
   name: add-adr-file
   title: Add ADR File
-  description: Creates a docs/adr.md file and opens a PR
+  description: |
+    To ensure consistency, discoverability, and traceability across all projects, Architecture Decision Records (ADRs) must follow the standards below:
+    All ADRs should be stored in a dedicated directory within the code repository: /docs/adr/
+
+    This ensures ADRs are version-controlled alongside the codebase and easily accessible to all contributors.
+    
+    Naming Convention:
+    Each ADR file must follow the naming pattern:
+    adr-<sequence-number>-<short-title>.md
+
+    Examples:
+    adr-001-use-postgresql.md
+    adr-002-adopt-terraform.md
+    adr-003-deprecate-legacy-auth.md
   tags:
     - adr-file
 spec:
@@ -43,11 +56,14 @@ spec:
           type: boolean
           title: Pre fill ADR fields
           default: false
-        adrFileName:
+        sequenceNumber:
           type: string
-          title: ADR File Name
-          description: Name of the ADR markdown file (e.g. adr.md)
-          default: adr.md
+          title: ADR Sequence Number
+          description: 'The sequential number for the ADR (e.g., 001).'
+        shortTitle:
+          type: string
+          title: Short Title
+          description: 'A short, descriptive title for the ADR filename (e.g., use-new-database).'
       dependencies:
         preFill:
           oneOf:
@@ -112,15 +128,15 @@ spec:
 
             ## Consequences
             ${{ parameters.adrConsequences if parameters.preFill else '[Describe the consequences.]' }}
-        targetPath: ./docs
+        targetPath: ./docs/adr
 
     - id: rename-adr
       name: Rename ADR file
       action: fs:rename
       input:
         files:
-          - from: ./docs/adr_template.md
-            to: ./docs/${{ parameters.adrFileName }}
+          - from: ./docs/adr/adr_template.md
+            to: ./docs/adr/adr-${{ parameters.sequenceNumber }}-${{ parameters.shortTitle }}.md
 
     - id: fetch-entity
       name: Fetch Catalog Entity
